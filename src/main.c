@@ -26,14 +26,22 @@ int main(int argc, char* argv[]) {
   
   while (1) {
     // Effacer les contenus de cmdline, cmdtoks et cmds
+    //"memset" Cette fonction permet de remplir une zone mémoire, identifiée par son adresse et sa taille, avec une valeur précise. 
+    memset(cmdline, 0, sizeof(cmdline));
+    memset(cmdtoks, 0, sizeof(cmdtoks));
+    memset(cmds, 0, sizeof(cmds));
     // Initialiser les valeurs par défaut dans cmds (stdin, stdout, stderr, ...)
-    
+    for (int i = 0; i < MAX_CMD_SIZE; i++) {
+      init_cmd(&cmds[i]);    
+    }
     // Afficher un prompt
     printf("$ ");
     
     // Lire une ligne dans cmdline - Attention fgets enregistre le \n final
     if (fgets(cmdline, MAX_LINE_SIZE, stdin)==NULL) break;
     cmdline[strlen(cmdline)-1]='\0';
+
+    printf("%s\n", cmdline);
     
     // Traiter la ligne de commande
     //   - supprimer les espaces en début et en fin de ligne

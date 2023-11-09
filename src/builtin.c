@@ -32,7 +32,6 @@ int builtin(cmd_t* cmd) {
     return -1;  // Si la commande n'est pas reconnue.
 }
 
-
 int cd(const char* path, int fderr) {
    if (path == NULL) {
         dprintf(fderr, "cd: argument manquant\n");
