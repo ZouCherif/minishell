@@ -1,0 +1,8 @@
+{
+    "editor.fontSize": 16,
+    "files.associations": {
+        "parser.h": "c",
+        "cmd.h": "c",
+        "stdio.h": "c"
+    }
+}
