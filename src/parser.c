@@ -67,8 +67,7 @@ int i=0,j=0;
     char tmp[max];
     while (i<max)
     {
-        if (strchr(s,str[i]))
-        {
+        if (strchr(s,str[i])){
             tmp[j]=' ';
             j++;
             tmp[j]=str[i];
@@ -76,11 +75,13 @@ int i=0,j=0;
             tmp[j]=' ';
             j++;
         }
-        else {tmp[j]=str[i];
-        j++;}
+        else {
+            tmp[j]=str[i];
+            j++;
+        }
         i++;
     }
-    tmp[j]='\0';
+    //tmp[j]='\0';
     strcpy(str,tmp);
     trim(str);
     return 0;

@@ -23,6 +23,7 @@ int main(int argc, char* argv[]) {
   char* cmdtoks[MAX_CMD_SIZE]; // "mots" de la ligne de commandes
   cmd_t cmds[MAX_CMD_SIZE];
   cmd_t* current;
+  int max;
   
   while (1) {
     // Effacer les contenus de cmdline, cmdtoks et cmds
@@ -40,16 +41,32 @@ int main(int argc, char* argv[]) {
     // Lire une ligne dans cmdline - Attention fgets enregistre le \n final
     if (fgets(cmdline, MAX_LINE_SIZE, stdin)==NULL) break;
     cmdline[strlen(cmdline)-1]='\0';
-
-    printf("%s\n", cmdline);
     
     // Traiter la ligne de commande
     //   - supprimer les espaces en début et en fin de ligne
+    trim(cmdline);
+
     //   - ajouter d'éventuels espaces autour de ; ! || && & ...
+    max = 0;
+    for (int i = 0; i < strlen(cmdline); i++) {
+      if (strchr(";!||&><",cmdline[i])){
+        max = max + 2;
+      }
+      max++;
+    }
+    separate_s(cmdline, ";!||&><", max);
+
+
     //   - supprimer les doublons d'espaces
+    clean(cmdline);
+
     //   - traiter les variables d'environnement
+    substenv(cmdline, MAX_LINE_SIZE);
 
     // Découper la ligne dans cmdtoks
+
+    strcut(cmdline, ' ', cmdtoks, MAX_CMD_SIZE);
+
 
     // Traduire la ligne en structures cmd_t dans cmds
     // Les commandes sont chaînées en fonction des séparateurs
