@@ -154,7 +154,7 @@ int strcut(char* str, char sep, char** tokens, size_t max) {
     {
         tokens[i]=token;
         token=strtok(NULL,&sep);
-        printf("token : %s\n",tokens[i]);
+        //printf("token : %s\n",tokens[i]);
         i++;
     }
     return 0;

@@ -45,7 +45,6 @@ int main(int argc, char* argv[]) {
     // Traiter la ligne de commande
     //   - supprimer les espaces en début et en fin de ligne
     trim(cmdline);
-
     //   - ajouter d'éventuels espaces autour de ; ! || && & ...
     max = 0;
     for (int i = 0; i < strlen(cmdline); i++) {
@@ -54,8 +53,7 @@ int main(int argc, char* argv[]) {
       }
       max++;
     }
-    separate_s(cmdline, ";!||&><", max);
-
+    separate_s(cmdline, ";!||&><", max+1);
 
     //   - supprimer les doublons d'espaces
     clean(cmdline);
@@ -64,11 +62,11 @@ int main(int argc, char* argv[]) {
     substenv(cmdline, MAX_LINE_SIZE);
 
     // Découper la ligne dans cmdtoks
-
     strcut(cmdline, ' ', cmdtoks, MAX_CMD_SIZE);
 
-
     // Traduire la ligne en structures cmd_t dans cmds
+    parse_cmd(cmdtoks, cmds, MAX_CMD_SIZE);
+
     // Les commandes sont chaînées en fonction des séparateurs
     //   - next -> exécution inconditionnelle
     //   - next_success -> exécution si la commande précédente réussit
@@ -77,10 +75,9 @@ int main(int argc, char* argv[]) {
     // Exécuter les commandes dans l'ordre en fonction des opérateurs
     // de flux
     for (current=cmds; current!=NULL; ) {
-      
       // Lancer la commande
-      //exec_cmd(current);
-      
+      printf("%d", exec_cmd(current));
+      current=current->next;
     }
   }
   
