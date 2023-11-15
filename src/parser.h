@@ -24,7 +24,8 @@
 
 int trim(char* str);
 int clean(char* str);
-int separate_s(char* str, char* s, size_t max);
+int separate_s(char* str, size_t max);
+int join_sep(char* str, char* s);
 int substenv(char* str, size_t max);
 
 int strcut(char* str, char sep, char** tokens, size_t max);

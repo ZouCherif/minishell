@@ -62,30 +62,99 @@ int clean(char* str) {
     return 0;
 }
 
-int separate_s(char* str, char* s, size_t max) {
-int i=0,j=0;
-    char tmp[max];
-    while (i<max)
-    {
-        if (strchr(s,str[i])){
-            tmp[j]=' ';
-            j++;
-            tmp[j]=str[i];
-            j++;
-            tmp[j]=' ';
-            j++;
+void ajouter_espace_adroite(char* str, int position, int len) {
+    char tmp[len];
+    int k = 0;
+    for (int i = 0; i < strlen(str); i++) {
+        tmp[k] = str[i];
+        k++;
+        if (i == position){
+            tmp[k] = ' ';
+            k++;
         }
-        else {
-            tmp[j]=str[i];
-            j++;
+    }
+    tmp[k] = '\0';
+    strcpy(str, tmp);
+}
+
+
+void ajouter_espace_agauche(char* str, int position, int len) {
+    char tmp[len];
+    int k = 0;
+    for (int i = 0; i < strlen(str); i++) {
+        if (i == position){
+            tmp[k] = ' ';
+            k++;
+        }
+        tmp[k] = str[i];
+        k++;
+    }
+    tmp[k] = '\0';
+    strcpy(str, tmp);
+}
+
+
+int separate_s(char* str, size_t max){
+    int i = 0;
+    while (str[i] != '\0') {
+        switch (str[i]){
+        case ';':
+            ajouter_espace_agauche(str, i, strlen(str)+1);
+            i++;
+            ajouter_espace_adroite(str, i, strlen(str)+1);
+            break;
+        case '<':
+            ajouter_espace_agauche(str, i, strlen(str)+1);
+            i++;
+            ajouter_espace_adroite(str, i, strlen(str)+1);
+            break;
+        case '&':
+            ajouter_espace_agauche(str, i, strlen(str)+1);
+            i++;
+            if ((str[i+1] == '&') || (str[i+1]=='>')){
+                i++;
+            }
+            ajouter_espace_adroite(str, i, strlen(str)+1);
+            break;
+        case '>':
+            if (str[i+1] == '>'){
+                ajouter_espace_agauche(str, i, strlen(str)+1);
+                i += 2;
+            }else if((str[i+1]=='&') && (str[i+2]=='2')){
+                ajouter_espace_agauche(str, i, strlen(str)+1);
+                i += 3;
+            }else{
+                ajouter_espace_agauche(str, i, strlen(str)+1);
+                i++;
+            }
+            ajouter_espace_adroite(str, i, strlen(str)+1);
+            break;
+        case '|':
+            ajouter_espace_agauche(str, i, strlen(str)+1);
+            i++;
+            if(str[i+1]=='|'){
+                i++;
+            }
+            ajouter_espace_adroite(str, i, strlen(str)+1);
+            break;
+        case '2':
+            if((str[i+1]=='>') && (str[i+2]=='&') && (str[i+3]=='1')){
+                ajouter_espace_agauche(str, i, strlen(str)+1);
+                i=i+4;
+            }else if((str[i+1]=='>') && (str[i+2]=='>')){
+                ajouter_espace_agauche(str, i, strlen(str)+1);
+                i=i+3;
+            }else if(str[i+1]=='>'){
+                ajouter_espace_agauche(str, i, strlen(str)+1);
+                i=i+2;
+            }
+            ajouter_espace_adroite(str, i, strlen(str)+1);
+            break;
         }
         i++;
     }
-    //tmp[j]='\0';
-    strcpy(str,tmp);
-    trim(str);
-    return 0;
 }
+
 
 int substenv(char* str, size_t max) {
     int i = 0, j = 0;

@@ -56,17 +56,9 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
             return -1;
         }
         cmds[idx_proc].stdout=fdout;
-        idx_tok++; // Pour prendre en compte le nom de fichier                                                             
-        continue; // Token traité                                                                                          
+        idx_tok++; // Pour prendre en compte le nom de fichier
+        continue; // Token traité
     }else{
-        // if(idx_arg == 0){
-        //     cmds[idx_proc].path=strdup(tokens[idx_tok]);
-        //     cmds[idx_proc].argv[idx_arg]=strdup(tokens[idx_tok]);
-        //     idx_arg++;
-        // }else{
-        //     cmds[idx_proc].argv[idx_arg]=strdup(tokens[idx_tok]);
-        //     idx_arg++;
-        // }
         if (idx_arg==0) {
             cmds[idx_proc].path = tokens[idx_tok];
         }
