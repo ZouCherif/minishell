@@ -36,6 +36,17 @@ int init_cmd(cmd_t* p) {
     p->next_failure = NULL;  // Valeur par défaut pour next_failure
 }
 
+void add_fdclose(int* fdclose, int fd){
+    int i = 0;
+    while (i < MAX_CMD_SIZE) {
+        if(fdclose[i]==-1){
+            fdclose[i] = fd;
+            break;
+        }
+        i++;
+    }
+}
+
 int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
     int idx_proc=0;
     int idx_arg=0;
@@ -43,28 +54,96 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
     while (tokens[max_tok] != 0){
       max_tok++;
     }
-  for(int idx_tok = 0; idx_tok < max_tok; ++idx_tok) {
-    if (strcmp(";", tokens[idx_tok])==0){
-         cmds[idx_proc].next=&cmds[idx_proc];
-        ++idx_proc;
-        idx_arg=0;
-        continue;
-    }else if (strcmp(">", tokens[idx_tok])==0) {
-        int fdout = open(tokens[idx_tok+1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (fdout==-1) {
+    for(int idx_tok = 0; idx_tok < max_tok; ++idx_tok) {
+        if (strcmp(";", tokens[idx_tok])==0){
+            cmds[idx_proc].next=&cmds[idx_proc];
+            ++idx_proc;
+            idx_arg=0;
+            continue;
+        }else if (strcmp(">", tokens[idx_tok])==0) {
+            int fdout = open(tokens[idx_tok+1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (fdout==-1) {
+                perror("Erreur de redirection :");
+                return -1;
+            }
+            cmds[idx_proc].stdout=fdout;
+            add_fdclose(cmds[idx_proc].fdclose, fdout);
+            idx_tok++; // Pour prendre en compte le nom de fichier
+            continue; // Token traité
+        }else if (strcmp(">>", tokens[idx_tok]) == 0) {
+        int fdout = open(tokens[idx_tok + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+        if (fdout == -1) {
             perror("Erreur de redirection :");
             return -1;
         }
-        cmds[idx_proc].stdout=fdout;
+        cmds[idx_proc].stdout = fdout;
+        add_fd(cmds[idx_proc].fdclose, fdout);
         idx_tok++; // Pour prendre en compte le nom de fichier
         continue; // Token traité
-    }else{
-        if (idx_arg==0) {
-            cmds[idx_proc].path = tokens[idx_tok];
+        }else if (strcmp("2>", tokens[idx_tok]) == 0) {
+        int fderr = open(tokens[idx_tok + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (fderr == -1) {
+            perror("Erreur de redirection :");
+            return -1;
         }
-        cmds[idx_proc].argv[idx_arg++] = tokens[idx_tok];
+        cmds[idx_proc].stderr = fderr;
+        add_fd(cmds[idx_proc].fdclose, fderr);
+        idx_tok++; // Pour prendre en compte le nom de fichier
+        continue; // Token traité
+        }else if (strcmp("2>>", tokens[idx_tok]) == 0) {
+        int fderr = open(tokens[idx_tok + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+        if (fderr == -1) {
+            perror("Erreur de redirection :");
+            return -1;
+        }
+        cmds[idx_proc].stderr = fderr;
+        add_fd(cmds[idx_proc].fdclose, fderr);
+        idx_tok++; // Pour prendre en compte le nom de fichier
+        continue; // Token traité
+        }else if (strcmp("2>&1", tokens[idx_tok]) == 0) {
+        cmds[idx_proc].stderr = cmds[idx_proc].stdout;
+        continue; // Token traité
+        }
+        else if (strcmp(">&2", tokens[idx_tok]) == 0) {
+            cmds[idx_proc].stdout = cmds[idx_proc].stderr;
+            continue; // Token traité
+        }
+        else if (strcmp("<", tokens[idx_tok]) == 0) {
+            int fdin = open(tokens[idx_tok + 1], O_RDONLY, 0644);
+            if (fdin == -1) {
+                perror("Erreur de redirection :");
+                return -1;
+            }
+            cmds[idx_proc].stdin = fdin;
+            add_fd(cmds[idx_proc].fdclose, fdin);
+            idx_tok++; // Pour prendre en compte le nom de fichier
+            continue; // Token traité
+        }
+        else if (strcmp("&", tokens[idx_tok]) == 0) {
+            cmds[idx_proc].wait = 0;
+            ++idx_proc;
+            idx_arg = 0;
+            continue; // Token traité
+        }
+        else if (strcmp("&&", tokens[idx_tok]) == 0) {
+            cmds[idx_proc].next_success = &cmds[idx_proc + 1];
+            ++idx_proc;
+            idx_arg = 0;
+            continue; // Token traité
+        }
+        else if (strcmp("||", tokens[idx_tok]) == 0) {
+            cmds[idx_proc].next_failure = &cmds[idx_proc + 1];
+            ++idx_proc;
+            idx_arg = 0;
+            continue; // Token traité
+        }
+        else{
+            if (idx_arg==0) {
+                cmds[idx_proc].path = tokens[idx_tok];
+            }
+            cmds[idx_proc].argv[idx_arg++] = tokens[idx_tok];
+        }
     }
-  }
 
   return 0;
 }

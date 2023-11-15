@@ -62,19 +62,18 @@ int main(int argc, char* argv[]) {
     //   max++;
     // }
     separate_s(cmdline, MAX_LINE_SIZE);
-    //clean(cmdline);
-    //join_sep(cmdline, "><&|;2");
 
     //   - supprimer les doublons d'espaces
+    clean(cmdline);
 
     // //   - traiter les variables d'environnement
-    // substenv(cmdline, MAX_LINE_SIZE);
+    substenv(cmdline, MAX_LINE_SIZE);
 
     // // Découper la ligne dans cmdtoks
-    // strcut(cmdline, ' ', cmdtoks, MAX_CMD_SIZE);
+    strcut(cmdline, ' ', cmdtoks, MAX_CMD_SIZE);
 
     // // Traduire la ligne en structures cmd_t dans cmds
-    // parse_cmd(cmdtoks, cmds, MAX_CMD_SIZE);
+    parse_cmd(cmdtoks, cmds, MAX_CMD_SIZE);
 
     // Les commandes sont chaînées en fonction des séparateurs
     //   - next -> exécution inconditionnelle
@@ -83,11 +82,11 @@ int main(int argc, char* argv[]) {
 
     // Exécuter les commandes dans l'ordre en fonction des opérateurs
     // de flux
-    // for (current=cmds; current!=NULL; ) {
-    //   // Lancer la commande
-    //   printf("%d", exec_cmd(current));
-    //   current=current->next;
-    // }
+    for (current=cmds; current!=NULL; ) {
+      // Lancer la commande
+      printf("%d", exec_cmd(current));
+      current=current->next;
+    }
   }
   
   fprintf(stderr, "\nGood bye!\n");

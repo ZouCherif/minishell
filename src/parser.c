@@ -77,7 +77,6 @@ void ajouter_espace_adroite(char* str, int position, int len) {
     strcpy(str, tmp);
 }
 
-
 void ajouter_espace_agauche(char* str, int position, int len) {
     char tmp[len];
     int k = 0;
@@ -92,7 +91,6 @@ void ajouter_espace_agauche(char* str, int position, int len) {
     tmp[k] = '\0';
     strcpy(str, tmp);
 }
-
 
 int separate_s(char* str, size_t max){
     int i = 0;
@@ -153,8 +151,8 @@ int separate_s(char* str, size_t max){
         }
         i++;
     }
+    trim(str);
 }
-
 
 int substenv(char* str, size_t max) {
     int i = 0, j = 0;
