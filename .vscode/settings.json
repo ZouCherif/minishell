@@ -3,6 +3,7 @@
     "files.associations": {
         "parser.h": "c",
         "cmd.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "ncurses.h": "c"
     }
 }

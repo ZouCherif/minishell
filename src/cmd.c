@@ -12,11 +12,43 @@
  */
 #include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 #include "cmd.h"
 #include "builtin.h"
 
 int exec_cmd(cmd_t* p) {
-    return builtin(p);
+    if(is_builtin(p->path)==0){
+        return builtin(p);
+    }
+    else if(fork()){
+        //Fermer les std si sont diff de leurs valeurs de base
+        //pour ne pas etre manipule par le processus fils
+            if(p->stdin != 0) close(p->stdin);
+            if(p->stdout != 1) close(p->stdout);
+            if(p->stderr != 2) close(p->stdout);
+
+            if(p->wait){
+                waitpid(p->pid, &p->status, 0);
+            }
+
+    }else{
+        p->pid=getpid();
+
+        dup2(p->stdin,0);
+        dup2(p->stdout,1);
+        dup2(p->stderr,2);
+        for (int *fd = p->fdclose; *fd != -1; ++fd) {
+            close(*fd);
+        }
+        int exec = execvp(p->path,p->argv);
+        if(exec==-1){
+            dprintf(p->stderr,"Commande inexistante\n");
+            exit(-1);
+        }
+    }
+    return 0;
 }
 
 int init_cmd(cmd_t* p) {
@@ -77,7 +109,7 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
             return -1;
         }
         cmds[idx_proc].stdout = fdout;
-        add_fd(cmds[idx_proc].fdclose, fdout);
+        add_fdclose(cmds[idx_proc].fdclose, fdout);
         idx_tok++; // Pour prendre en compte le nom de fichier
         continue; // Token traité
         }else if (strcmp("2>", tokens[idx_tok]) == 0) {
@@ -87,7 +119,7 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
             return -1;
         }
         cmds[idx_proc].stderr = fderr;
-        add_fd(cmds[idx_proc].fdclose, fderr);
+        add_fdclose(cmds[idx_proc].fdclose, fderr);
         idx_tok++; // Pour prendre en compte le nom de fichier
         continue; // Token traité
         }else if (strcmp("2>>", tokens[idx_tok]) == 0) {
@@ -97,7 +129,7 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
             return -1;
         }
         cmds[idx_proc].stderr = fderr;
-        add_fd(cmds[idx_proc].fdclose, fderr);
+        add_fdclose(cmds[idx_proc].fdclose, fderr);
         idx_tok++; // Pour prendre en compte le nom de fichier
         continue; // Token traité
         }else if (strcmp("2>&1", tokens[idx_tok]) == 0) {
@@ -115,7 +147,7 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
                 return -1;
             }
             cmds[idx_proc].stdin = fdin;
-            add_fd(cmds[idx_proc].fdclose, fdin);
+            add_fdclose(cmds[idx_proc].fdclose, fdin);
             idx_tok++; // Pour prendre en compte le nom de fichier
             continue; // Token traité
         }

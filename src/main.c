@@ -23,7 +23,6 @@ int main(int argc, char* argv[]) {
   char* cmdtoks[MAX_CMD_SIZE]; // "mots" de la ligne de commandes
   cmd_t cmds[MAX_CMD_SIZE];
   cmd_t* current;
-  int max;
   
   while (1) {
     // Effacer les contenus de cmdline, cmdtoks et cmds
@@ -46,21 +45,6 @@ int main(int argc, char* argv[]) {
     trim(cmdline);
     //   - ajouter d'éventuels espaces autour de ; ! || && & ...
 
-    // ajouter_espace_adroite(cmdline, 3, strlen(cmdline)+1);
-    // ajouter_espace_agauche(cmdline, 3, strlen(cmdline)+1);
-    // printf("%s\n", cmdline);
-
-
-
-
-
-    // max = 0;
-    // for (int i = 0; i < strlen(cmdline); i++) {
-    //   if (strchr("><&|;",cmdline[i])){
-    //     max = max + 2;
-    //   }
-    //   max++;
-    // }
     separate_s(cmdline, MAX_LINE_SIZE);
 
     //   - supprimer les doublons d'espaces
@@ -88,7 +72,6 @@ int main(int argc, char* argv[]) {
       current=current->next;
     }
   }
-  
   fprintf(stderr, "\nGood bye!\n");
   return 0;
 }
