@@ -71,12 +71,13 @@ int export(const char* var, const char* value, int fderr) {
         dprintf(fderr, "Vous devez entrer la variable d'envirenement et sa valeur\n");
         return 1; // Error
     }
+    printf("hello farid\n");
     // Affecter la valeur "value" to the variable envirenement
     if (setenv(var, value, 1) != 0) {
         dprintf(fderr, "Erreur dans la saisie de la variable envirenement\n");
         return 1; // Erreur
     }
-    return 0; // Succes
+    return 0; // succes
 }
 
 int exit_shell(int ret, int fderr) {
