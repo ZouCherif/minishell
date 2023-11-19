@@ -27,7 +27,7 @@ int exec_cmd(cmd_t* p) {
         //pour ne pas etre manipule par le processus fils
             if(p->stdin != 0) close(p->stdin);
             if(p->stdout != 1) close(p->stdout);
-            if(p->stderr != 2) close(p->stdout);
+            if(p->stderr != 2) close(p->stderr);
 
             if(p->wait){
                 waitpid(p->pid, &p->status, 0);
@@ -52,7 +52,7 @@ int exec_cmd(cmd_t* p) {
 }
 
 int init_cmd(cmd_t* p) {
-    p->pid = -1;  // Valeur par défaut pour pid
+    p->pid = getgid();  // Valeur par défaut pour pid
     p->status = 0;  // Valeur par défaut pour status
     p->stdin = 0;  // Utilisation du descripteur de fichier standard pour stdin
     p->stdout = 1;  // Utilisation du descripteur de fichier standard pour stdout
@@ -71,12 +71,20 @@ int init_cmd(cmd_t* p) {
 void add_fdclose(int* fdclose, int fd){
     int i = 0;
     while (i < MAX_CMD_SIZE) {
+        if(fdclose[i]==fd) break;
         if(fdclose[i]==-1){
             fdclose[i] = fd;
             break;
         }
         i++;
     }
+}
+
+void merge_fdclose(int* tab1, int* tab2){
+  for(int i = 0; i< MAX_CMD_SIZE; i++)
+    add_fdclose(tab1, tab2[i]);
+  for(int i = 0; i< MAX_CMD_SIZE; i++)
+    add_fdclose(tab2, tab1[i]);
 }
 
 int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
@@ -168,6 +176,25 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
             ++idx_proc;
             idx_arg = 0;
             continue; // Token traité
+        }else if (strcmp("|", tokens[idx_tok]) == 0) {
+            int tube[2];
+            if (pipe(tube) == -1) { 
+                write(cmds[idx_proc].stderr, "Erreur creation du pipe\n",
+                    sizeof("Erreur creation du pipe\n"));
+            }
+            
+            cmds[idx_proc].stdout = tube[1];
+            cmds[idx_proc + 1].stdin = tube[0]; 
+            
+            add_fdclose(cmds[idx_proc].fdclose, cmds[idx_proc].stdout);
+            add_fdclose(cmds[idx_proc].fdclose, cmds[idx_proc + 1].stdin);
+
+            // Commande suivante
+            cmds[idx_proc].next = &cmds[idx_proc + 1];
+            ++idx_proc;
+            idx_arg = 0;
+
+            continue; // Token traité
         }
         else{
             if (idx_arg==0) {
@@ -175,6 +202,10 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
             }
             cmds[idx_proc].argv[idx_arg++] = tokens[idx_tok];
         }
+    }
+    for(int i = 0; i<MAX_CMD_SIZE; i++){
+    for(int j = 0; j<MAX_CMD_SIZE; j++)
+      merge_fdclose(cmds[i].fdclose, cmds[j].fdclose);
     }
 
   return 0;

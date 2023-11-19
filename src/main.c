@@ -66,10 +66,22 @@ int main(int argc, char* argv[]) {
 
     // Exécuter les commandes dans l'ordre en fonction des opérateurs
     // de flux
-    for (current=cmds; current!=NULL; ) {
-      // Lancer la commande
-      printf("%d", exec_cmd(current));
-      current=current->next;
+    for (current = cmds; current != NULL;) {
+      int cmd_fail = exec_cmd(current);
+      if (current->next != NULL) {
+        // Exécution inconditionnelle
+        current = current->next;
+        continue;
+      }
+      if (current->next_success != NULL && !cmd_fail) {
+        current = current->next_success;
+        continue;
+      }
+      if (current->next_failure != NULL && cmd_fail) {
+        current = current->next_failure;
+        continue;
+      }
+      break;
     }
   }
   fprintf(stderr, "\nGood bye!\n");

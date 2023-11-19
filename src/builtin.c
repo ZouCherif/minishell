@@ -16,7 +16,7 @@
 #include "stdlib.h"
 int is_builtin(const char* cmd) {
     // si cmd est l'une de ces commandes alors on retourne 0 pour dire vrai
-    if (!strcmp(cmd,"cd")|| !strcmp(cmd,"export")|| !strcmp(cmd,"exit_shell"))
+    if (!strcmp(cmd,"cd")|| !strcmp(cmd,"export")|| !strcmp(cmd,"exit"))
     {
         return 0;
     }
