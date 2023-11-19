@@ -59,11 +59,11 @@ int main(int argc, char* argv[]) {
     // // Traduire la ligne en structures cmd_t dans cmds
     parse_cmd(cmdtoks, cmds, MAX_CMD_SIZE);
 
+
     // Les commandes sont chaînées en fonction des séparateurs
     //   - next -> exécution inconditionnelle
     //   - next_success -> exécution si la commande précédente réussit
     //   - next_failure -> exécution si la commande précédente échoue
-
     // Exécuter les commandes dans l'ordre en fonction des opérateurs
     // de flux
     for (current = cmds; current != NULL;) {

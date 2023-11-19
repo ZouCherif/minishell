@@ -4,6 +4,7 @@
         "parser.h": "c",
         "cmd.h": "c",
         "stdio.h": "c",
-        "ncurses.h": "c"
+        "ncurses.h": "c",
+        "builtin.h": "c"
     }
 }

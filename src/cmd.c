@@ -19,6 +19,9 @@
 #include "builtin.h"
 
 int exec_cmd(cmd_t* p) {
+    if (p->path == NULL){
+      return -1;  
+    } 
     if(is_builtin(p->path)==0){
         return builtin(p);
     }
@@ -28,7 +31,6 @@ int exec_cmd(cmd_t* p) {
             if(p->stdin != 0) close(p->stdin);
             if(p->stdout != 1) close(p->stdout);
             if(p->stderr != 2) close(p->stderr);
-
             if(p->wait){
                 waitpid(p->pid, &p->status, 0);
             }
@@ -52,7 +54,7 @@ int exec_cmd(cmd_t* p) {
 }
 
 int init_cmd(cmd_t* p) {
-    p->pid = getgid();  // Valeur par défaut pour pid
+    p->pid = getpid();  // Valeur par défaut pour pid
     p->status = 0;  // Valeur par défaut pour status
     p->stdin = 0;  // Utilisation du descripteur de fichier standard pour stdin
     p->stdout = 1;  // Utilisation du descripteur de fichier standard pour stdout
@@ -96,7 +98,7 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
     }
     for(int idx_tok = 0; idx_tok < max_tok; ++idx_tok) {
         if (strcmp(";", tokens[idx_tok])==0){
-            cmds[idx_proc].next=&cmds[idx_proc];
+            cmds[idx_proc].next=&cmds[idx_proc + 1];
             ++idx_proc;
             idx_arg=0;
             continue;
