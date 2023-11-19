@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
       init_cmd(&cmds[i]);    
     } 
     // Afficher un prompt
-    printf("$ ");
+    printf("%s $ ", getenv("PWD"));
     
     // Lire une ligne dans cmdline - Attention fgets enregistre le \n final
     if (fgets(cmdline, MAX_LINE_SIZE, stdin)==NULL) break;

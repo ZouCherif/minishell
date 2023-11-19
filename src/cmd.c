@@ -12,9 +12,9 @@
  */
 #include <fcntl.h>
 #include <string.h>
-#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/wait.h>
-#include <sys/types.h>
 #include "cmd.h"
 #include "builtin.h"
 
@@ -26,18 +26,15 @@ int exec_cmd(cmd_t* p) {
         return builtin(p);
     }
     else if(fork()){
-        //Fermer les std si sont diff de leurs valeurs de base
-        //pour ne pas etre manipule par le processus fils
             if(p->stdin != 0) close(p->stdin);
             if(p->stdout != 1) close(p->stdout);
             if(p->stderr != 2) close(p->stderr);
             if(p->wait){
-                waitpid(p->pid, &p->status, 0);
+                wait(&p->status);
             }
 
     }else{
         p->pid=getpid();
-
         dup2(p->stdin,0);
         dup2(p->stdout,1);
         dup2(p->stderr,2);
@@ -163,6 +160,7 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
         }
         else if (strcmp("&", tokens[idx_tok]) == 0) {
             cmds[idx_proc].wait = 0;
+            cmds[idx_proc].next = &cmds[idx_proc + 1];
             ++idx_proc;
             idx_arg = 0;
             continue; // Token traité
@@ -197,6 +195,27 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
             idx_arg = 0;
 
             continue; // Token traité
+        }
+        else if(strchr(tokens[idx_tok],'=') != NULL){
+            char var[50];
+            char val[50];
+            int k = 0;
+            int i;
+            for (i = 0; i < strlen(tokens[idx_tok]); ++i) {
+                if (tokens[idx_tok][i] == '=') {
+                    break;
+                }
+                var[k] = tokens[idx_tok][i];
+                k++;
+            }
+            i++;
+            k  = 0;
+            while (i < strlen(tokens[idx_tok])) {
+                val[k] = tokens[idx_tok][i];
+                i++;
+                k++;
+            }
+            setenv(var, val, 1);
         }
         else{
             if (idx_arg==0) {

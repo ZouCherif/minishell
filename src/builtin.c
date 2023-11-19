@@ -30,8 +30,7 @@ int builtin(cmd_t* cmd) {
         //argv[1] contient l'argument de la commande'
         //On verifie si son contenu n'est pas vide
         if (cmd->argv[1] == NULL) {
-            dprintf(cmd->stderr, "cd: Ajouter un argument !\n");
-            return 1;
+            cmd->argv[1] = "/home/cherif";
         }
         // si tout est bien on fait appel a la fonction cd
         return (cd(cmd->argv[1], cmd->stderr));
@@ -53,15 +52,14 @@ int builtin(cmd_t* cmd) {
 }
 
 int cd(const char* path, int fderr) {
-   if (path == NULL) { // verifier que l'utilisateur a taper un argument avec cd
-        dprintf(fderr, "cd: Ajouter un argument\n");
-        return 1;
-    }
+    char current_dir[1024];
+    setenv("OLDPWD", getcwd(current_dir, sizeof(current_dir)), 1);
 // si le changement de repertoire n'est pas effectue on affiche un message d'erreur
     if (chdir(path) != 0) {
         dprintf(fderr, "cd: impossible de changer de répertoire vers %s\n", path);
         return 1;
     }
+    setenv("PWD", getcwd(current_dir, sizeof(current_dir)), 1);
     return 0;
 }
 
