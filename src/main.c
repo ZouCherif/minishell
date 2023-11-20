@@ -35,7 +35,9 @@ int main(int argc, char* argv[]) {
       init_cmd(&cmds[i]);    
     } 
     // Afficher un prompt
+    printf("\033[1;32m\033[38;5;22m");
     printf("%s $ ", getenv("PWD"));
+    printf("\033[0m");// Réinitialise la couleur à celle par défaut
     
     // Lire une ligne dans cmdline - Attention fgets enregistre le \n final
     if (fgets(cmdline, MAX_LINE_SIZE, stdin)==NULL) break;
@@ -67,17 +69,17 @@ int main(int argc, char* argv[]) {
     // Exécuter les commandes dans l'ordre en fonction des opérateurs
     // de flux
     for (current = cmds; current != NULL;) {
-      int cmd_fail = exec_cmd(current);
+      exec_cmd(current);
       if (current->next != NULL) {
         // Exécution inconditionnelle
         current = current->next;
         continue;
       }
-      if (current->next_success != NULL && !cmd_fail) {
+      if (current->next_success != NULL) {
         current = current->next_success;
         continue;
       }
-      if (current->next_failure != NULL && cmd_fail) {
+      if (current->next_failure != NULL) {
         current = current->next_failure;
         continue;
       }
@@ -87,3 +89,6 @@ int main(int argc, char* argv[]) {
   fprintf(stderr, "\nGood bye!\n");
   return 0;
 }
+
+
+//&

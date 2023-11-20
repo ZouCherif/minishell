@@ -11,9 +11,6 @@
  
  */
 #include <fcntl.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/wait.h>
 #include "cmd.h"
 #include "builtin.h"
@@ -33,6 +30,16 @@ int exec_cmd(cmd_t* p) {
                 wait(&p->status);
             }
 
+            //WEXITSTATUS sert à verifier si la cmd a touver un resultat ou affiche une erreur
+            if (p->next_success != NULL){
+                if(WEXITSTATUS(p->status)){
+                    p->next_success = NULL;
+                }
+            }else if (p->next_failure != NULL){
+                if(!WEXITSTATUS(p->status)){
+                    p->next_failure = NULL;
+                }
+            }
     }else{
         p->pid=getpid();
         dup2(p->stdin,0);
@@ -44,7 +51,7 @@ int exec_cmd(cmd_t* p) {
         int exec = execvp(p->path,p->argv);
         if(exec==-1){
             dprintf(p->stderr,"Commande inexistante\n");
-            exit(-1);
+            return 1;
         }
     }
     return 0;
