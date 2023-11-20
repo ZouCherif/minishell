@@ -40,6 +40,7 @@ int exec_cmd(cmd_t* p) {
                     p->next_failure = NULL;
                 }
             }
+
     }else{
         p->pid=getpid();
         dup2(p->stdin,0);
