@@ -19,17 +19,17 @@ int exec_cmd(cmd_t* p) {
     if (p->path == NULL){
       return -1;  
     } 
+    pid_t child_pid;
     if(is_builtin(p->path)==0){
         return builtin(p);
     }
-    else if(fork()){
+    else if(child_pid = fork()){
             if(p->stdin != 0) close(p->stdin);
             if(p->stdout != 1) close(p->stdout);
             //if(p->stderr != 2) close(p->stderr);
             if(p->wait){
-                wait(&p->status);
+                waitpid(child_pid, &p->status, 0);
             }
-            //printf("here\n");
 
             //WEXITSTATUS sert à verifier si la cmd a touver un resultat ou affiche une erreur
             if (p->next_success != NULL){
