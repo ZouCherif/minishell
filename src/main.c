@@ -94,6 +94,3 @@ int main(int argc, char* argv[]) {
   fprintf(stderr, "\nGood bye!\n");
   return 0;
 }
-
-
-//&, 2>&1

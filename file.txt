@@ -1,2 +1,0 @@
-ls: cannot access 'fff': No such file or directory
-ls: cannot access 'hdh': No such file or directory
