@@ -16,7 +16,7 @@
 #include "stdlib.h"
 int is_builtin(const char* cmd) {
     // si cmd est l'une de ces commandes alors on retourne 0 pour dire vrai
-    if (!strcmp(cmd,"cd")|| !strcmp(cmd,"export")|| !strcmp(cmd,"exit"))
+    if (!strcmp(cmd,"cd")|| !strcmp(cmd,"export")|| !strcmp(cmd,"unset") || !strcmp(cmd,"exit"))
     {
         return 0;
     }
@@ -44,6 +44,9 @@ int builtin(cmd_t* cmd) {
         }
         // si tout est bien on fait appel a la fonction cd
         return (export(cmd->argv[1],cmd->argv[2],cmd->stderr));
+    }
+    if (strcmp(cmd->argv[0], "unset") == 0) {
+        return (unset(cmd->argv[1], cmd->stderr));
     }
     if (strcmp(cmd->argv[0], "exit") == 0) {
         return (exit_shell(cmd->argv[1], cmd->stderr));
@@ -75,6 +78,16 @@ int export(const char* var, const char* value, int fderr) {
         return 1; // Erreur
     }
     return 0; // succes
+}
+
+int unset(const char* var, int fderr) {
+  if(getenv(var)==NULL){
+    write(fderr, "Variable n'existe pas\n", strlen("Variable n'existe pas\n"));
+    return -1;
+  }else{
+    unsetenv(var);
+  }
+  return 0;
 }
 
 int exit_shell(int ret, int fderr) {

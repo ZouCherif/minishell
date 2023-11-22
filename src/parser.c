@@ -191,8 +191,8 @@ int substenv(char* str, size_t max) {
                 strcpy(tmp + j, resenv);
                 j += strlen(resenv);
             } else {
-                strcpy(tmp + j, env);
-                j += strlen(env);
+                strcpy(tmp + j, " ");
+                j += strlen(" ");
             }
 
             k = 0;
