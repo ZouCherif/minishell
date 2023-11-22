@@ -1,11 +1,17 @@
 /*
   Projet minishell - Licence 3 Info - PSI 2023
  
-  Nom :
-  Prénom :
-  Num. étudiant :
-  Groupe de projet :
-  Date :
+Nom : SAD SAOUD 
+Prénom : Farid
+Num. étudiant : 22312283
+Groupe de projet :1-9
+Date :24/11/2024
+Nom : ZOUAOUI
+Prénom : Mohamed Cherif
+Num. étudiant : 22313975
+Groupe de projet :1-9
+Date :24/11/2024
+
  
   Gestion des processus (implémentation).
  

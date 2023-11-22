@@ -1,13 +1,18 @@
 /*
   Projet minishell - Licence 3 Info - PSI 2023
  
-  Nom :
-  Prénom :
-  Num. étudiant :
-  Groupe de projet :
-  Date :
- 
-  Parsing de la ligne de commandes utilisateur (implémentation).
+Nom : SAD SAOUD 
+Prénom : Farid
+Num. étudiant : 22312283
+Groupe de projet :1-9
+Date :24/11/2024
+Nom : ZOUAOUI
+Prénom : Mohamed Cherif
+Num. étudiant : 22313975
+Groupe de projet :1-9
+Date :24/11/2024
+
+Parsing de la ligne de commandes utilisateur (implémentation).
  
  */
 
@@ -20,21 +25,21 @@ int trim(char* str) {
      if (str == NULL) {
         return -1; // Vérification pour éviter les pointeurs nuls
     }
-    int length = strlen(str);
-    int start = 0; // Indice du premier caractère non-espace
-    int end = length - 1; // Indice du dernier caractère non-espace
-    while (str[start] == ' ' || str[start] == '\t') {
-        start++;
+    int length = strlen(str); // représente la longueur de la commande tapée
+    int premierCar = 0; // représente le premier caractère aprés les espace 
+    int fin = length - 1; // 
+    while (str[premierCar] == ' ') {
+        premierCar++;
     }
-    if (start == length) {
+    if (premierCar == length) {
         str[0] = '\0';
         return 0;
     }
-    while (str[end] == ' ' || str[end] == '\t') {
-        end--;
+    while (str[fin] == ' ') {
+        fin--;
     }
-    int newLength = end - start + 1;
-    memmove(str, str + start, newLength);
+    int newLength = fin - premierCar + 1;
+    memmove(str, str + premierCar, newLength);
     str[newLength] = '\0';
 
     return 0;
