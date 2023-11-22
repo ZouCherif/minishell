@@ -43,7 +43,7 @@ int builtin(cmd_t* cmd) {
             return 1;
         }
         // si tout est bien on fait appel a la fonction cd
-        return (export(cmd->argv[1],cmd->argv[2],cmd->stderr));
+        return (export(cmd->argv[1], cmd->stderr));
     }
     if (strcmp(cmd->argv[0], "unset") == 0) {
         return (unset(cmd->argv[1], cmd->stderr));
@@ -66,14 +66,14 @@ int cd(const char* path, int fderr) {
     return 0;
 }
 
-int export(const char* var, const char* value, int fderr) {
+int export(const char* var, int fderr) {
     // Verifier si les valeurs de "var" et "value" sont vides
-    if (var == NULL || value == NULL) {
-        dprintf(fderr, "Vous devez entrer la variable d'envirenement et sa valeur\n");
+    if (var == NULL) {
+        dprintf(fderr, "Vous devez entrer la variable d'envirenement\n");
         return 1; // Error
     }
     // Affecter la valeur "value" to the variable envirenement
-    if (setenv(var, value, 1) != 0) {
+    if (setenv(var, getenv(var), 1) != 0) {
         dprintf(fderr, "Erreur dans la saisie de la variable envirenement\n");
         return 1; // Erreur
     }
@@ -93,11 +93,11 @@ int unset(const char* var, int fderr) {
 int exit_shell(int ret, int fderr) {
     if(ret==0){
         // 0 le code de succes pour la fonction exit()
-        dprintf(fderr,"Sortie de minishell");
+        dprintf(fderr,"Sortie de minishell\n");
         exit(ret);
         //notre programme est termine avec succes
     }
     // sinon
-    dprintf(fderr,"Une erreur s'est produite");
+    dprintf(fderr,"Une erreur s'est produite\n");
     exit(ret);
 }

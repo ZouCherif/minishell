@@ -25,10 +25,11 @@ int exec_cmd(cmd_t* p) {
     else if(fork()){
             if(p->stdin != 0) close(p->stdin);
             if(p->stdout != 1) close(p->stdout);
-            if(p->stderr != 2) close(p->stderr);
+            //if(p->stderr != 2) close(p->stderr);
             if(p->wait){
                 wait(&p->status);
             }
+            //printf("here\n");
 
             //WEXITSTATUS sert à verifier si la cmd a touver un resultat ou affiche une erreur
             if (p->next_success != NULL){
