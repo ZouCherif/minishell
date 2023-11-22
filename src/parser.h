@@ -26,12 +26,24 @@ Date :24/11/2024
   Voir le TP sur les chaînes de caractères.
   Commentaires à compléter.
 */
-
+//Cette fonction permet de supprimer les espaces de début et de fin d'une chaine de caractères
 int trim(char* str);
+
+//Cette fonction permet de supprimer les espaces doubles dans une chaine de caractères
 int clean(char* str);
+
+//Cette fonction permet de mettre un espace avant et aprés d'un mot clé dans une chaine de caractères
 int separate_s(char* str, size_t max);
+
+//
 int join_sep(char* str, char* s);
+
+//Cette fonction permet de remplacer la variables d'environnement par leurs valeurs
 int substenv(char* str, size_t max);
+
+/*Cette fonction permet de découper un chaine de caractère en des mots 
+qui sont separés par des espaces et les stocker
+dans un tableau de chaine de caractères*/
 
 int strcut(char* str, char sep, char** tokens, size_t max);
 
