@@ -1,0 +1,27 @@
+ls -l
+cd src
+echo $PWD
+echo $OLDPWD
+cd ..
+cd
+mkdir dir
+rmdir dir
+ls > file.txt
+ls -l >> file.txt
+ls dir1 2> file.txt
+ls dir2 2>> file.txt
+ls dir1 2>&1
+ls >&2
+echo HELLO; ls; cat file.txt
+echo hello World | grep -o l | tr 'a-z' 'A-Z'
+echo hello && ls
+echo hello || ls
+VAR=hello
+echo $VAR
+unset VAR
+echo $VAR
+ls & echo MINISHELL
+for i in {1..5}
+    for> echo HELLO
+
+exit

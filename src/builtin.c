@@ -34,7 +34,7 @@ int builtin(cmd_t* cmd) {
         //argv[1] contient l'argument de la commande'
         //On verifie si son contenu n'est pas vide
         if (cmd->argv[1] == NULL) {
-            cmd->argv[1] = "/home/cherif";
+            cmd->argv[1] = "/home/farid";
         }
         // si tout est bien on fait appel a la fonction cd
         return (cd(cmd->argv[1], cmd->stderr));
