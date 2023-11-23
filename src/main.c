@@ -64,7 +64,9 @@ int main(int argc, char* argv[]) {
     strcut(cmdline, ' ', cmdtoks, MAX_CMD_SIZE);
 
     // // Traduire la ligne en structures cmd_t dans cmds
-    parse_cmd(cmdtoks, cmds, MAX_CMD_SIZE);
+    //la fonction retourne 3 quand on execute la boucle for donc on a pas besoin de appeler exec_cmd dans le main
+    if (parse_cmd(cmdtoks, cmds, MAX_CMD_SIZE)== 3) continue;
+
 
 
     // Les commandes sont chaînées en fonction des séparateurs

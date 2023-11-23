@@ -17,9 +17,12 @@ Date :24/11/2024
  
  */
 #include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
 #include <sys/wait.h>
 #include "cmd.h"
 #include "builtin.h"
+#include "parser.h"
 
 int exec_cmd(cmd_t* p) {
     //si le nom de la commande est NULL 
@@ -43,7 +46,7 @@ int exec_cmd(cmd_t* p) {
 
             //WEXITSTATUS sert à verifier si la cmd a touver un resultat ou affiche une erreur
             if (p->next_success != NULL){
-                // si la commande avant && n'est pas exécuter 
+                // si la commande avant && n'a pas trouve de resultat 
                 if(WEXITSTATUS(p->status)){
                     // On n'aura pas besoin d'exécuter ce qui est aprés
                     p->next_success = NULL;
@@ -72,11 +75,8 @@ int exec_cmd(cmd_t* p) {
         // si l'exécution n'est pas fait on retourne un message d'erreur
         if(exec==-1){
             dprintf(p->stderr,"Commande inexistante\n");
-            return 1;
+            exit(-1);
         }
-        // close(p->stdin);
-        // close(p->stdout);
-        // close(p->stderr);
     }
     return 0;
 }
@@ -295,6 +295,47 @@ int parse_cmd(char* tokens[], cmd_t* cmds, size_t max) {
             }
             //ajouter un variable d'environnement et lui affecter la valeur
             setenv(var, val, 1);
+        }else if (strcmp("for", tokens[idx_tok]) == 0){
+                int start, end;
+                //on verifie si le 3eme tokens et de la forme {int..int}, si vrai on recupere les indices
+                if (sscanf(tokens[idx_tok+3], "{%d..%d}", &start, &end) == 2){
+                    char cmd[MAX_LINE_SIZE];
+                    char* cmd_pieces[MAX_CMD_SIZE];
+                    cmd_t* current;
+                    //ici on fait le meme traitement que le main evec la commande à i'interieure de la boucle
+                    printf("for> ");
+                    if (fgets(cmd, MAX_LINE_SIZE, stdin)==NULL) break;
+                    cmd[strlen(cmd)-1]='\0';
+                    trim(cmd);
+                    separate_s(cmd, MAX_LINE_SIZE);
+                    clean(cmd);
+                    substenv(cmd, MAX_LINE_SIZE);
+                    strcut(cmd, ' ', cmd_pieces, MAX_CMD_SIZE);
+                    parse_cmd(cmd_pieces, cmds, MAX_CMD_SIZE);
+                    //on execute la commande {end-start} fois
+                    for (int i = start; i < end; i++) {
+                        for (current = cmds; current != NULL;) {
+                            exec_cmd(current);
+                            if (current->next != NULL) {
+                                // Exécution inconditionnelle
+                                current = current->next;
+                                continue;
+                            }
+                            if (current->next_success != NULL) {
+                                current = current->next_success;
+                                continue;
+                            }
+                            if (current->next_failure != NULL) {
+                                current = current->next_failure;
+                                continue;
+                            }
+                            break;
+                            }
+                    }
+                    return 3;
+                }else {
+
+                }
         }
         else{
             //une nouvelle commande
