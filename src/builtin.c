@@ -34,6 +34,7 @@ int builtin(cmd_t* cmd) {
         //argv[1] contient l'argument de la commande'
         //On verifie si son contenu n'est pas vide
         if (cmd->argv[1] == NULL) {
+            //pour que cd marche bien sans arguements il faut ajouter votre propre path
             cmd->argv[1] = "/home/farid";
         }
         // si tout est bien on fait appel a la fonction cd
@@ -46,7 +47,7 @@ int builtin(cmd_t* cmd) {
             dprintf(cmd->stderr, "export contient deux arguments\n");
             return 1;
         }
-        // si tout est bien on fait appel a la fonction cd
+        // si tout est bien on fait appel a la fonction export
         return (export(cmd->argv[1], cmd->stderr));
     }
     if (strcmp(cmd->argv[0], "unset") == 0) {

@@ -1,0 +1,9 @@
+builtin.o
+cmd.o
+doc
+file.txt
+main.o
+Makefile
+minishell
+parser.o
+src

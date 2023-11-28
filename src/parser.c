@@ -162,14 +162,17 @@ int separate_s(char* str, size_t max){
             if((str[i+1]=='>') && (str[i+2]=='&') && (str[i+3]=='1')){
                 ajouter_espace_agauche(str, i, strlen(str)+1);
                 i=i+4;
+                ajouter_espace_adroite(str, i, strlen(str)+1);
             }else if((str[i+1]=='>') && (str[i+2]=='>')){
                 ajouter_espace_agauche(str, i, strlen(str)+1);
                 i=i+3;
+                ajouter_espace_adroite(str, i, strlen(str)+1);
             }else if(str[i+1]=='>'){
                 ajouter_espace_agauche(str, i, strlen(str)+1);
                 i=i+2;
+                ajouter_espace_adroite(str, i, strlen(str)+1);
             }
-            ajouter_espace_adroite(str, i, strlen(str)+1);
+
             break;
         }
         i++;

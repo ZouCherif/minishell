@@ -111,7 +111,7 @@ void add_fdclose(int* fdclose, int fd){
         i++;
     }
 }
-//fusionner deux tableaux de ligne de commandes
+//fusionner deux tableaux de descripteurs de fichiers
 void merge_fdclose(int* tab1, int* tab2){
   for(int i = 0; i< MAX_CMD_SIZE; i++)
     add_fdclose(tab1, tab2[i]);
